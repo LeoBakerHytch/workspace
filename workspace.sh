@@ -1,10 +1,11 @@
 #!/bin/bash
 
 # where to store the sparse-image
-WORKSPACE=${HOME}/Documents/workspace.dmg.sparseimage
+WORKSPACE=${HOME}/workspace.dmg.sparseimage
+MOUNTPOINT=/Volumes/Workspace
 
 create() {
-    hdiutil create -type SPARSE -fs 'Case-sensitive Journaled HFS+' -size 60g -volname workspace ${WORKSPACE}
+    hdiutil create -type SPARSE -fs 'Case-sensitive Journaled HFS+' -size 60g -volname Workspace ${WORKSPACE}
 }
 
 automount() {
@@ -12,27 +13,26 @@ automount() {
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
+    <dict>
           <key>RunAtLoad</key>
           <true/>
           <key>Label</key>
           <string>com.workspace</string>
           <key>ProgramArguments</key>
           <array>
-                    <string>hdiutil</string>
-                    <string>attach</string>
-            <string>-notremovable</string>
-            <string>-nobrowse</string>
-            <string>-mountpoint</string>
-            <string>/Volumes/workspace</string>
-                    <string>${WORKSPACE}</string>
+                <string>hdiutil</string>
+                <string>attach</string>
+                <string>-notremovable</string>
+                <string>-nobrowse</string>
+                <string>-mountpoint</string>
+                <string>${MOUNTPOINT}</string>
+                <string>${WORKSPACE}</string>
           </array>
-</dict>
+    </dict>
 </plist>
 EOF
     sudo cp com.workspace.plist /Library/LaunchDaemons/com.workspace.plist
 }
-
 
 detach() {
     m=$(hdiutil info | grep "/Volumes/workspace" | cut -f1)
@@ -42,7 +42,7 @@ detach() {
 }
 
 attach() {
-    hdiutil attach -notremovable -nobrowse -mountpoint /Volumes/workspace ${WORKSPACE}
+    hdiutil attach -notremovable -nobrowse -mountpoint ${MOUNTPOINT} ${WORKSPACE}
 }
 
 compact() {
