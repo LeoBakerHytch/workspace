@@ -1,10 +1,27 @@
 #!/bin/bash
 
+# ---------------------------------------------------------
+# Customizable Settings
+# ---------------------------------------------------------
+
 # where to store the sparse-image
-WORKSPACE=${HOME}/projects-case-sensitive.dmg.sparseimage
+WORKSPACE=${HOME}/.workspace.dmg.sparseimage
+
+# location where workspace will be mounted
+MOUNTPOINT=${HOME}/workspace
+
+# name of workspace as visible in Finder
+VOLUME_NAME=workspace
+
+# volume size
+VOLUME_SIZE=60g
+
+# ---------------------------------------------------------
+# Functionality
+# ---------------------------------------------------------
 
 create() {
-    hdiutil create -type SPARSE -fs 'Case-sensitive Journaled HFS+' -size 50g -volname projects-case-sensitive ${WORKSPACE}
+    hdiutil create -type SPARSE -fs 'Case-sensitive Journaled HFS+' -size ${VOLUME_SIZE} -volname ${VOLUME_NAME} ${WORKSPACE}
 }
 
 automount() {
@@ -41,7 +58,7 @@ detach() {
 }
 
 attach() {
-    sudo hdiutil attach -notremovable -nobrowse -mountpoint ${HOME}/projects-case-sensitive ${WORKSPACE}
+    sudo hdiutil attach -notremovable -nobrowse -mountpoint ${MOUNTPOINT} ${WORKSPACE}
 }
 
 compact() {
