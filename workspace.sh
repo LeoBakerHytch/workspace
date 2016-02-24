@@ -72,7 +72,7 @@ help() {
 usage: workspace <command>
 
 Possible commands:
-   create       Initialize a new case-sensitive volume. Only needed one time
+   create       Initialize case-sensitive volume (only needed first time)
    automount    Configure OS X to mount the volume automatically on restart
    mount        Attach the case-sensitive volume
    unmount      Detach the case-sensitive volume
