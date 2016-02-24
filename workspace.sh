@@ -75,6 +75,7 @@ Possible commands:
    create       Initialize a new case-sensitive volume. Only needed one time
    automount    Configure OS X to mount the volume automatically on restart
    mount        Attach the case-sensitive volume
+   unmount      Detach the case-sensitive volume
    compact      Remove any uneeded reserved space in the volume
    help         Display this message
 EOF
