@@ -1,11 +1,10 @@
 #!/bin/bash
 
 # where to store the sparse-image
-WORKSPACE=${HOME}/workspace.dmg.sparseimage
-MOUNTPOINT=/Volumes/Workspace
+WORKSPACE=${HOME}/projects-case-sensitive.dmg.sparseimage
 
 create() {
-    hdiutil create -type SPARSE -fs 'Case-sensitive Journaled HFS+' -size 60g -volname Workspace ${WORKSPACE}
+    hdiutil create -type SPARSE -fs 'Case-sensitive Journaled HFS+' -size 50g -volname projects-case-sensitive ${WORKSPACE}
 }
 
 automount() {
@@ -14,20 +13,20 @@ automount() {
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
     <dict>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>Label</key>
-          <string>com.workspace</string>
-          <key>ProgramArguments</key>
-          <array>
-                <string>hdiutil</string>
-                <string>attach</string>
-                <string>-notremovable</string>
-                <string>-nobrowse</string>
-                <string>-mountpoint</string>
-                <string>${MOUNTPOINT}</string>
-                <string>${WORKSPACE}</string>
-          </array>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>Label</key>
+        <string>com.workspace</string>
+        <key>ProgramArguments</key>
+        <array>
+            <string>hdiutil</string>
+            <string>attach</string>
+            <string>-notremovable</string>
+            <string>-nobrowse</string>
+            <string>-mountpoint</string>
+            <string>/Volumes/workspace</string>
+            <string>${WORKSPACE}</string>
+        </array>
     </dict>
 </plist>
 EOF
@@ -37,12 +36,12 @@ EOF
 detach() {
     m=$(hdiutil info | grep "/Volumes/workspace" | cut -f1)
     if [ ! -z "$m" ]; then
-        hdiutil detach $m
+        sudo hdiutil detach $m
     fi
 }
 
 attach() {
-    hdiutil attach -notremovable -nobrowse -mountpoint ${MOUNTPOINT} ${WORKSPACE}
+    sudo hdiutil attach -notremovable -nobrowse -mountpoint ${HOME}/projects-case-sensitive ${WORKSPACE}
 }
 
 compact() {
@@ -51,11 +50,31 @@ compact() {
     attach
 }
 
+help() {
+    cat <<EOF
+usage: workspace <command>
+
+Possible commands:
+   create       Initialize a new case-sensitive volume. Only needed one time
+   automount    Configure OS X to mount the volume automatically on restart
+   mount        Attach the case-sensitive volume
+   compact      Remove any uneeded reserved space in the volume
+   help         Display this message
+EOF
+}
+
+invalid() {
+    printf "workspace: '$1' is not a valid command.\n\n";
+    help
+}
+
 case "$1" in
     create) create;;
     automount) automount;;
-    attach) attach;;
-    detach) detach;;
+    mount) attach;;
+    unmount) detach;;
     compact) compact;;
-    *) ;;
+    help) help;;
+    '') help;;
+    *) invalid $1;;
 esac
