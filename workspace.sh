@@ -41,7 +41,7 @@ automount() {
             <string>-notremovable</string>
             <string>-nobrowse</string>
             <string>-mountpoint</string>
-            <string>/Volumes/workspace</string>
+            <string>${MOUNTPOINT}</string>
             <string>${WORKSPACE}</string>
         </array>
     </dict>
