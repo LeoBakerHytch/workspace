@@ -51,7 +51,7 @@ EOF
 }
 
 detach() {
-    m=$(hdiutil info | grep "/Volumes/workspace" | cut -f1)
+    m=$(hdiutil info | grep "${MOUNTPOINT}" | cut -f1)
     if [ ! -z "$m" ]; then
         sudo hdiutil detach $m
     fi
