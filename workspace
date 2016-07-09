@@ -5,16 +5,16 @@
 # ---------------------------------------------------------
 
 # where to store the sparse-image
-WORKSPACE=${HOME}/.workspace.dmg.sparseimage
+WORKSPACE=${HOME}/.Development.dmg.sparseimage
 
 # location where workspace will be mounted
-MOUNTPOINT=${HOME}/workspace
+MOUNTPOINT=${HOME}/Development
 
 # name of workspace as visible in Finder
-VOLUME_NAME=workspace
+VOLUME_NAME=Development
 
 # volume size
-VOLUME_SIZE=60g
+VOLUME_SIZE=100g
 
 # ---------------------------------------------------------
 # Functionality
