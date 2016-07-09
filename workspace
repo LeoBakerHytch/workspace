@@ -25,7 +25,8 @@ create() {
 }
 
 automount() {
-    cat << EOF > com.workspace.plist
+    TEMP=$(mktemp 2> /dev/null)
+    cat << EOF > $TEMP
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -47,7 +48,7 @@ automount() {
     </dict>
 </plist>
 EOF
-    sudo cp com.workspace.plist /Library/LaunchDaemons/com.workspace.plist
+    sudo mv $TEMP /Library/LaunchDaemons/com.workspace.plist
 }
 
 detach() {
