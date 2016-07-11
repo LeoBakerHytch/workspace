@@ -1,32 +1,25 @@
 #!/bin/bash
 
-# ---------------------------------------------------------
 # Customizable Settings
-# ---------------------------------------------------------
-
-# where to store the sparse-image
-WORKSPACE=${HOME}/.Development.dmg.sparseimage
-
-# location where workspace will be mounted
-MOUNTPOINT=${HOME}/Development
-
-# name of workspace as visible in Finder
 VOLUME_NAME=Development
-
-# volume size
+WORKSPACE=${HOME}/.${VOLUME_NAME}.dmg.sparseimage
+MOUNT_POINT=${HOME}/${VOLUME_NAME}
 VOLUME_SIZE=100g
 
-# ---------------------------------------------------------
-# Functionality
-# ---------------------------------------------------------
-
-create() {
-    hdiutil create -type SPARSE -fs 'Case-sensitive Journaled HFS+' -size ${VOLUME_SIZE} -volname ${VOLUME_NAME} ${WORKSPACE}
+create()
+{
+    hdiutil create \
+	-type SPARSE \
+	-fs 'Case-sensitive Journaled HFS+' \
+	-size ${VOLUME_SIZE} \
+	-volname ${VOLUME_NAME} \
+	${WORKSPACE}
 }
 
-automount() {
-    TEMP=$(mktemp 2> /dev/null)
-    cat << EOF > $TEMP
+automount()
+{
+    local TEMP_FILE=$(mktemp 2> /dev/null)
+    cat << EOF > ${TEMP_FILE}
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -42,33 +35,42 @@ automount() {
             <string>-notremovable</string>
             <string>-nobrowse</string>
             <string>-mountpoint</string>
-            <string>${MOUNTPOINT}</string>
+            <string>${MOUNT_POINT}</string>
             <string>${WORKSPACE}</string>
         </array>
     </dict>
 </plist>
 EOF
-    sudo mv $TEMP /Library/LaunchDaemons/com.workspace.plist
+
+    local DAEMON_FILE=/Library/LaunchDaemons/com.workspace.plist
+    chmod 644 ${TEMP_FILE}
+    sudo chown root:wheel ${TEMP_FILE}
+    sudo mv ${TEMP_FILE} ${DAEMON_FILE}
+    sudo launchctl load -w ${DAEMON_FILE}
 }
 
-detach() {
-    m=$(hdiutil info | grep "${MOUNTPOINT}" | cut -f1)
-    if [ ! -z "$m" ]; then
-        sudo hdiutil detach $m
+detach()
+{
+    DISK=$(hdiutil info | grep "${MOUNT_POINT}" | cut -f1)
+    if [ ! -z ${DISK} ]; then
+        sudo hdiutil detach ${DISK}
     fi
 }
 
-attach() {
-    sudo hdiutil attach -notremovable -nobrowse -mountpoint ${MOUNTPOINT} ${WORKSPACE}
+attach()
+{
+    sudo hdiutil attach -notremovable -nobrowse -mountpoint ${MOUNT_POINT} ${WORKSPACE}
 }
 
-compact() {
+compact()
+{
     detach
     hdiutil compact ${WORKSPACE} -batteryallowed
     attach
 }
 
-help() {
+help()
+{
     cat <<EOF
 usage: workspace <command>
 
@@ -82,7 +84,8 @@ Possible commands:
 EOF
 }
 
-invalid() {
+invalid()
+{
     printf "workspace: '$1' is not a valid command.\n\n";
     help
 }
