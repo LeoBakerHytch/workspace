@@ -12,8 +12,8 @@ create()
 	-type SPARSE \
 	-fs 'Case-sensitive Journaled HFS+' \
 	-size ${VOLUME_SIZE} \
-	-volname ${VOLUME_NAME} \
-	${WORKSPACE}
+	-volname "${VOLUME_NAME}" \
+	"${WORKSPACE}"
 }
 
 automount()
@@ -59,13 +59,13 @@ detach()
 
 attach()
 {
-    sudo hdiutil attach -notremovable -nobrowse -mountpoint ${MOUNT_POINT} ${WORKSPACE}
+    sudo hdiutil attach -notremovable -nobrowse -mountpoint "${MOUNT_POINT}" "${WORKSPACE}"
 }
 
 compact()
 {
     detach
-    hdiutil compact ${WORKSPACE} -batteryallowed
+    hdiutil compact "${WORKSPACE}" -batteryallowed
     attach
 }
 
