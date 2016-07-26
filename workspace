@@ -112,7 +112,7 @@ invalid()
 # Main
 # ====
 
-if [ ! -f "$WORKSPACE" ] || [ true ]
+if [ ! -f "$WORKSPACE" ]
 then
     first_run
 
