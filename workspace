@@ -1,10 +1,18 @@
 #!/bin/bash
 
 # Customizable Settings
+# =====================
+
 VOLUME_NAME=Development
 WORKSPACE=${HOME}/.${VOLUME_NAME}.dmg.sparseimage
 MOUNT_POINT=${HOME}/${VOLUME_NAME}
 VOLUME_SIZE=100g
+
+
+# Functions
+# =========
+
+SCRIPT=$(basename $0)
 
 create()
 {
@@ -69,6 +77,16 @@ compact()
     attach
 }
 
+first_run()
+{
+    cat <<EOF
+$SCRIPT: No workspace disk image found at the following location:
+${WORKSPACE}
+
+EOF
+    help
+}
+
 help()
 {
     cat <<EOF
@@ -86,17 +104,27 @@ EOF
 
 invalid()
 {
-    printf "workspace: '$1' is not a valid command.\n\n";
+    printf "$SCRIPT: '$1' is not a valid command.\n\n";
     help
 }
 
-case "$1" in
-    create) create;;
-    automount) automount;;
-    mount) attach;;
-    unmount) detach;;
-    compact) compact;;
-    help) help;;
-    '') help;;
-    *) invalid $1;;
-esac
+
+# Main
+# ====
+
+if [ ! -f "$WORKSPACE" ] || [ true ]
+then
+    first_run
+
+else
+    case "$1" in
+	create) create;;
+	automount) automount;;
+	mount) attach;;
+	unmount) detach;;
+	compact) compact;;
+	help) help;;
+	'') help;;
+	*) invalid $1;;
+    esac
+fi
